@@ -20,7 +20,7 @@ public class Main extends JFrame {
         app = builder.build();
         client = app.createClient();
 
-        setTitle("JABR OMEGA");
+        setTitle("JABR Stable v1.0");
         setSize(1600, 950);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
