@@ -20,21 +20,23 @@ public class Main extends JFrame {
         app = builder.build();
         client = app.createClient();
 
-        setTitle("JABR SUPERNOVA X");
-        setSize(1600, 900);
+        setTitle("JABR TITAN X");
+        setSize(1500, 900);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         tabs = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
         JPanel p = new JPanel(new BorderLayout());
-        JButton add = new JButton(" + ");
-        add.addActionListener(e -> addTab("https://www.google.com"));
+        JButton nt = new JButton(" + ");
+        nt.addActionListener(e -> addTab("https://www.google.com"));
+        
         p.add(tabs, BorderLayout.CENTER);
-        p.add(add, BorderLayout.EAST);
+        p.add(nt, BorderLayout.EAST);
         add(p);
 
         addTab("https://www.youtube.com");
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 CefApp.getInstance().dispose();
                 System.exit(0);
@@ -48,9 +50,9 @@ public class Main extends JFrame {
         tabs.setSelectedComponent(bi);
     }
 
-    public void update(BrowserInstance bi, String title) {
+    public void update(BrowserInstance bi, String t) {
         int i = tabs.indexOfComponent(bi);
-        if (i != -1) tabs.setTitleAt(i, title.length() > 15 ? title.substring(0, 12) + "..." : title);
+        if (i != -1) tabs.setTitleAt(i, t.length() > 15 ? t.substring(0, 12) + "..." : t);
     }
 
     public static void main(String[] args) {
