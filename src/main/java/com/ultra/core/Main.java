@@ -20,7 +20,7 @@ public class Main extends JFrame {
         app = builder.build();
         client = app.createClient();
 
-        setTitle("JABR QUANTUM");
+        setTitle("JABR SUPERNOVA X");
         setSize(1600, 900);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
@@ -44,13 +44,13 @@ public class Main extends JFrame {
 
     public void addTab(String url) {
         BrowserInstance bi = new BrowserInstance(client, url, this);
-        tabs.addTab("New Tab (" + (tabs.getTabCount() + 1) + ")", bi);
+        tabs.addTab("New Tab", bi);
         tabs.setSelectedComponent(bi);
     }
 
     public void update(BrowserInstance bi, String title) {
         int i = tabs.indexOfComponent(bi);
-        if (i != -1) tabs.setTitleAt(i, title.length() > 15 ? title.substring(0, 12) + ".." : title);
+        if (i != -1) tabs.setTitleAt(i, title.length() > 15 ? title.substring(0, 12) + "..." : title);
     }
 
     public static void main(String[] args) {
