@@ -20,23 +20,21 @@ public class Main extends JFrame {
         app = builder.build();
         client = app.createClient();
 
-        setTitle("JABR OMEGA 2026");
+        setTitle("JABR TITAN");
         setSize(1600, 900);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         tabs = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
         JPanel p = new JPanel(new BorderLayout());
-        JButton nt = new JButton(" + ");
-        nt.addActionListener(e -> addTab("https://www.google.com"));
-        
+        JButton add = new JButton(" + ");
+        add.addActionListener(e -> addTab("https://www.google.com"));
         p.add(tabs, BorderLayout.CENTER);
-        p.add(nt, BorderLayout.EAST);
+        p.add(add, BorderLayout.EAST);
         add(p);
 
         addTab("https://www.youtube.com");
 
         addWindowListener(new WindowAdapter() {
-            @Override
             public void windowClosing(WindowEvent e) {
                 CefApp.getInstance().dispose();
                 System.exit(0);
@@ -50,9 +48,14 @@ public class Main extends JFrame {
         tabs.setSelectedComponent(bi);
     }
 
-    public void update(BrowserInstance bi, String t) {
+    public void closeTab(BrowserInstance bi) {
+        if (tabs.getTabCount() > 1) tabs.remove(bi);
+        else System.exit(0);
+    }
+
+    public void update(BrowserInstance bi, String title) {
         int i = tabs.indexOfComponent(bi);
-        if (i != -1) tabs.setTitleAt(i, t.length() > 15 ? t.substring(0, 12) + "..." : t);
+        if (i != -1) tabs.setTitleAt(i, title.length() > 15 ? title.substring(0, 12) + ".." : title);
     }
 
     public static void main(String[] args) {
