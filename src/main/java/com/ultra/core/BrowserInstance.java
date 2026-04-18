@@ -34,7 +34,7 @@ public class BrowserInstance extends JPanel {
             browser.loadURL(val);
         });
 
-        JButton titan = new JButton("TITAN-SCRATCH"); titan.addActionListener(e -> 
+        JButton titan = new JButton("SCRATCH"); titan.addActionListener(e -> 
             browser.executeJavaScript("document.querySelectorAll('*').forEach(el => el.style.fontFamily = 'Comic Sans MS');", "", 0));
 
         JButton dark = new JButton("DARK"); dark.addActionListener(e -> 
