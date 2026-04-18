@@ -15,7 +15,7 @@ public class BrowserInstance extends JPanel {
         setLayout(new BorderLayout());
         browser = client.createBrowser(url, false, false);
         
-        // INTERCEPTOR: Ad-block & Tracking Protection
+        
         client.addRequestHandler(new CefRequestHandlerAdapter() {
             public boolean onBeforeBrowse(CefBrowser b, Object f, CefRequest r, boolean user, boolean rd) {
                 String u = r.getURL();
@@ -35,21 +35,21 @@ public class BrowserInstance extends JPanel {
             browser.loadURL(u);
         });
 
-        // FEATURE: Cinema Mode (Inverts colors for dark browsing)
+        
         JButton dark = new JButton("DARK"); dark.addActionListener(e -> 
             browser.executeJavaScript("document.body.style.filter='invert(1) hue-rotate(180deg)';" , "", 0));
 
-        // FEATURE: Source Sniffer (Logs HTML to console)
+        
         JButton sniff = new JButton("SNIFF"); sniff.addActionListener(e -> 
             browser.getSource(s -> System.out.println("PAGE SOURCE LENGTH: " + s.length())));
 
-        // FEATURE: RAM Optimizer
+        
         JButton clean = new JButton("CLEAN"); clean.addActionListener(e -> {
             System.gc();
             JOptionPane.showMessageDialog(this, "Garbage Collector Invoked");
         });
 
-        // FEATURE: Inspector
+
         JButton dev = new JButton("F12"); dev.addActionListener(e -> {
             JFrame fr = new JFrame("DevTools"); fr.setSize(800, 600);
             fr.add(browser.getDevTools().getUIComponent()); fr.setVisible(true);
@@ -63,7 +63,7 @@ public class BrowserInstance extends JPanel {
         add(tool, BorderLayout.NORTH);
         add(browser.getUIComponent(), BorderLayout.CENTER);
 
-        // SYNC: URL and Tab Title
+        
         client.addDisplayHandler(new CefDisplayHandlerAdapter() {
             public void onAddressChange(CefBrowser b, Object f, String u) {
                 if(b == browser) urlField.setText(u);
