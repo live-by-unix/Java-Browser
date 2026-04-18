@@ -20,17 +20,18 @@ public class Main extends JFrame {
         app = builder.build();
         client = app.createClient();
 
-        setTitle("JABR TITAN");
-        setSize(1600, 900);
+        setTitle("JABR OMEGA");
+        setSize(1600, 950);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         tabs = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
-        JPanel p = new JPanel(new BorderLayout());
+        JPanel wrap = new JPanel(new BorderLayout());
         JButton add = new JButton(" + ");
         add.addActionListener(e -> addTab("https://www.google.com"));
-        p.add(tabs, BorderLayout.CENTER);
-        p.add(add, BorderLayout.EAST);
-        add(p);
+        
+        wrap.add(tabs, BorderLayout.CENTER);
+        wrap.add(add, BorderLayout.EAST);
+        add(wrap);
 
         addTab("https://www.youtube.com");
 
@@ -44,7 +45,7 @@ public class Main extends JFrame {
 
     public void addTab(String url) {
         BrowserInstance bi = new BrowserInstance(client, url, this);
-        tabs.addTab("New Tab", bi);
+        tabs.addTab("Loading...", bi);
         tabs.setSelectedComponent(bi);
     }
 
@@ -53,9 +54,9 @@ public class Main extends JFrame {
         else System.exit(0);
     }
 
-    public void update(BrowserInstance bi, String title) {
+    public void update(BrowserInstance bi, String t) {
         int i = tabs.indexOfComponent(bi);
-        if (i != -1) tabs.setTitleAt(i, title.length() > 15 ? title.substring(0, 12) + ".." : title);
+        if (i != -1) tabs.setTitleAt(i, t.length() > 18 ? t.substring(0, 15) + "..." : t);
     }
 
     public static void main(String[] args) {
