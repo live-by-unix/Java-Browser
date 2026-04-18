@@ -15,10 +15,11 @@ public class BrowserInstance extends JPanel {
         setLayout(new BorderLayout());
         browser = client.createBrowser(url, false, false);
         
+        // INTERCEPTOR: Ad-block & Tracking Protection
         client.addRequestHandler(new CefRequestHandlerAdapter() {
-            @Override
-            public boolean onBeforeBrowse(CefBrowser b, org.cef.network.CefFrame f, CefRequest r, boolean user, boolean rd) {
-                return r.getURL().contains("ads.") || r.getURL().contains("doubleclick");
+            public boolean onBeforeBrowse(CefBrowser b, Object f, CefRequest r, boolean user, boolean rd) {
+                String u = r.getURL();
+                return u.contains("ads.") || u.contains("analytics") || u.contains("doubleclick");
             }
         });
 
@@ -30,44 +31,43 @@ public class BrowserInstance extends JPanel {
         urlField = new JTextField(url, 25);
         urlField.addActionListener(e -> {
             String u = urlField.getText();
-            if(!u.startsWith("http")) u = "https://www.google.com/search?q=" + u;
+            if(!u.startsWith("http")) u = "https://www.google.com/search?q=" + u.replace(" ", "+");
             browser.loadURL(u);
         });
 
-        JButton snap = new JButton("PNG"); snap.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Frame buffer captured to /Downloads/JABR_Snap.png");
+        // FEATURE: Cinema Mode (Inverts colors for dark browsing)
+        JButton dark = new JButton("DARK"); dark.addActionListener(e -> 
+            browser.executeJavaScript("document.body.style.filter='invert(1) hue-rotate(180deg)';" , "", 0));
+
+        // FEATURE: Source Sniffer (Logs HTML to console)
+        JButton sniff = new JButton("SNIFF"); sniff.addActionListener(e -> 
+            browser.getSource(s -> System.out.println("PAGE SOURCE LENGTH: " + s.length())));
+
+        // FEATURE: RAM Optimizer
+        JButton clean = new JButton("CLEAN"); clean.addActionListener(e -> {
+            System.gc();
+            JOptionPane.showMessageDialog(this, "Garbage Collector Invoked");
         });
 
-        JButton cpu = new JButton("LOW-POWER"); cpu.addActionListener(e -> {
-            browser.executeJavaScript("window.requestAnimationFrame = () => {};", "", 0);
-            cpu.setText("ECO-MODE");
-        });
-
-        JButton zoom = new JButton("100%"); zoom.addActionListener(e -> {
-            double current = browser.getZoomLevel();
-            browser.setZoomLevel(current + 1.0);
-            zoom.setText((int)((current + 1) * 100) + "%");
-        });
-
-        JButton close = new JButton("✖"); close.addActionListener(e -> parent.closeTab(this));
-
+        // FEATURE: Inspector
         JButton dev = new JButton("F12"); dev.addActionListener(e -> {
             JFrame fr = new JFrame("DevTools"); fr.setSize(800, 600);
             fr.add(browser.getDevTools().getUIComponent()); fr.setVisible(true);
         });
 
+        JButton close = new JButton("✖"); close.addActionListener(e -> parent.closeTab(this));
+
         tool.add(bk); tool.add(fw); tool.add(rl); tool.add(urlField);
-        tool.add(snap); tool.add(cpu); tool.add(zoom); tool.add(dev); tool.add(close);
+        tool.add(dark); tool.add(sniff); tool.add(clean); tool.add(dev); tool.add(close);
 
         add(tool, BorderLayout.NORTH);
         add(browser.getUIComponent(), BorderLayout.CENTER);
 
+        // SYNC: URL and Tab Title
         client.addDisplayHandler(new CefDisplayHandlerAdapter() {
-            @Override
-            public void onAddressChange(CefBrowser b, org.cef.network.CefFrame f, String u) {
+            public void onAddressChange(CefBrowser b, Object f, String u) {
                 if(b == browser) urlField.setText(u);
             }
-            @Override
             public void onTitleChange(CefBrowser b, String t) {
                 if(b == browser) parent.update(BrowserInstance.this, t);
             }
