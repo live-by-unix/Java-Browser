@@ -20,8 +20,8 @@ public class Main extends JFrame {
         app = builder.build();
         client = app.createClient();
 
-        setTitle("JABR TITAN X");
-        setSize(1500, 900);
+        setTitle("JABR OMEGA 2026");
+        setSize(1600, 900);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         tabs = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
