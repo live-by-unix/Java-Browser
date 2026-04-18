@@ -10,32 +10,32 @@ import java.awt.event.*;
 
 public class Main extends JFrame {
     private JTabbedPane tabs;
-    private CefApp app;
     private CefClient client;
 
     public Main() throws Exception {
         FlatDarkLaf.setup();
         CefAppBuilder builder = new CefAppBuilder();
         builder.setInstallDir(new java.io.File("jcef-bundle"));
-        app = builder.build();
+        CefApp app = builder.build();
         client = app.createClient();
 
-        setTitle("JABR Stable v1.0");
-        setSize(1600, 950);
+        setTitle("JABR Stable");
+        setSize(1500, 900);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         tabs = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
-        JPanel wrap = new JPanel(new BorderLayout());
-        JButton add = new JButton(" + ");
-        add.addActionListener(e -> addTab("https://www.google.com"));
+        JPanel container = new JPanel(new BorderLayout());
+        JButton addBtn = new JButton(" + ");
+        addBtn.addActionListener(e -> addTab("https://www.google.com"));
         
-        wrap.add(tabs, BorderLayout.CENTER);
-        wrap.add(add, BorderLayout.EAST);
-        add(wrap);
+        container.add(tabs, BorderLayout.CENTER);
+        container.add(addBtn, BorderLayout.EAST);
+        add(container);
 
         addTab("https://www.youtube.com");
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 CefApp.getInstance().dispose();
                 System.exit(0);
@@ -45,18 +45,18 @@ public class Main extends JFrame {
 
     public void addTab(String url) {
         BrowserInstance bi = new BrowserInstance(client, url, this);
-        tabs.addTab("Loading...", bi);
+        tabs.addTab("New Tab", bi);
         tabs.setSelectedComponent(bi);
+    }
+
+    public void updateTab(BrowserInstance bi, String title) {
+        int i = tabs.indexOfComponent(bi);
+        if (i != -1) tabs.setTitleAt(i, title.length() > 15 ? title.substring(0, 12) + "..." : title);
     }
 
     public void closeTab(BrowserInstance bi) {
         if (tabs.getTabCount() > 1) tabs.remove(bi);
         else System.exit(0);
-    }
-
-    public void update(BrowserInstance bi, String t) {
-        int i = tabs.indexOfComponent(bi);
-        if (i != -1) tabs.setTitleAt(i, t.length() > 18 ? t.substring(0, 15) + "..." : t);
     }
 
     public static void main(String[] args) {
