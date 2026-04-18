@@ -10,7 +10,6 @@ import java.awt.*;
 public class BrowserInstance extends JPanel {
     private final CefBrowser browser;
     private final JTextField urlField;
-    private Timer autoRefresh;
 
     public BrowserInstance(CefClient client, String url, Main parent) {
         setLayout(new BorderLayout());
@@ -19,14 +18,14 @@ public class BrowserInstance extends JPanel {
         client.addRequestHandler(new CefRequestHandlerAdapter() {
             @Override
             public boolean onBeforeBrowse(CefBrowser b, org.cef.network.CefFrame f, CefRequest r, boolean user, boolean rd) {
-                return r.getURL().contains("google-analytics.com") || r.getURL().contains("ads.");
+                return r.getURL().contains("ads.") || r.getURL().contains("tracker");
             }
         });
 
         JPanel tool = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JButton b = new JButton("◀"); b.addActionListener(e -> browser.goBack());
-        JButton f = new JButton("▶"); f.addActionListener(e -> browser.goForward());
-        JButton r = new JButton("↻"); r.addActionListener(e -> browser.reload());
+        JButton bk = new JButton("◀"); bk.addActionListener(e -> browser.goBack());
+        JButton fw = new JButton("▶"); fw.addActionListener(e -> browser.goForward());
+        JButton rl = new JButton("↻"); rl.addActionListener(e -> browser.reload());
         
         urlField = new JTextField(url, 25);
         urlField.addActionListener(e -> {
@@ -35,23 +34,21 @@ public class BrowserInstance extends JPanel {
             browser.loadURL(u);
         });
 
-        JButton night = new JButton("NIGHT"); night.addActionListener(e -> 
-            browser.executeJavaScript("document.body.style.filter='invert(1) hue-rotate(180deg) brightness(0.8)';" , "", 0));
+        JButton pdf = new JButton("PDF"); pdf.addActionListener(e -> browser.print());
 
-        JButton refresh = new JButton("AUTO"); refresh.addActionListener(e -> {
-            if(autoRefresh == null) {
-                autoRefresh = new Timer(30000, ev -> browser.reload());
-                autoRefresh.start();
-                refresh.setText("AUTO: ON");
-            } else {
-                autoRefresh.stop();
-                autoRefresh = null;
-                refresh.setText("AUTO");
-            }
+        JButton theme = new JButton("THEME"); theme.addActionListener(e -> {
+            String color = JOptionPane.showInputDialog("Enter Background Color (e.g. #333):");
+            browser.executeJavaScript("document.body.style.backgroundColor='" + color + "';", "", 0);
         });
 
-        JButton wipe = new JButton("WIPE"); wipe.addActionListener(e -> {
-            browser.executeJavaScript("document.cookie.split(';').forEach(c => document.cookie = c.replace(/^ +/, '').replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/')); location.reload();", "", 0);
+        JButton flush = new JButton("FLUSH"); flush.addActionListener(e -> {
+            System.gc();
+            JOptionPane.showMessageDialog(this, "Memory Purged");
+        });
+
+        JButton incog = new JButton("INCOGNITO"); incog.addActionListener(e -> {
+            browser.executeJavaScript("localStorage.clear(); sessionStorage.clear();", "", 0);
+            parent.addTab("https://duckduckgo.com");
         });
 
         JButton dev = new JButton("F12"); dev.addActionListener(e -> {
@@ -59,8 +56,8 @@ public class BrowserInstance extends JPanel {
             fr.add(browser.getDevTools().getUIComponent()); fr.setVisible(true);
         });
 
-        tool.add(b); tool.add(f); tool.add(r); tool.add(urlField);
-        tool.add(night); tool.add(refresh); tool.add(wipe); tool.add(dev);
+        tool.add(bk); tool.add(fw); tool.add(rl); tool.add(urlField);
+        tool.add(pdf); tool.add(theme); tool.add(flush); tool.add(incog); tool.add(dev);
 
         add(tool, BorderLayout.NORTH);
         add(browser.getUIComponent(), BorderLayout.CENTER);
